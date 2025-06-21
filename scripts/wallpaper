@@ -1,0 +1,32 @@
+#!/bin/bash
+
+CURRENT_WALLPAPER="$HOME/.cache/current_wallpaper"
+NEW_WALLPAPER=""
+WALLPAPER_DIR="$HOME/cross-os-drive/Media/wallpapers/"
+
+while getopts 'i:r' FLAG; do
+	case "$FLAG" in
+		i)
+			if [[ -f "$OPTARG" && $(file --mime-type -b "$OPTARG") == image/* ]]; then
+				NEW_WALLPAPER=$OPTARG
+			else
+				echo "Invalid File"
+				exit 1
+			fi
+			;;
+		r)
+			WALL=$(realpath "$CURRENT_WALLPAPER" | xargs basename)
+			NEW_WALLPAPER=$(fd . "$WALLPAPER_DIR" -t f --exclude "$WALL" | shuf -n 1)
+			;;
+		?)
+			echo "Invalid flag provided"
+			exit 1
+			;;
+	esac
+done
+
+if [ -n "$NEW_WALLPAPER" ]; then
+	wal -n -i "$NEW_WALLPAPER"
+	hyprctl hyprpaper reload ,"$NEW_WALLPAPER"
+	ln -sf "$NEW_WALLPAPER" "$CURRENT_WALLPAPER"
+fi
