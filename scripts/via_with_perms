@@ -3,5 +3,4 @@
 # VIA then setting them back once it's closed
 sudo chmod a+rw /dev/hidraw1
 chromium "usevia.app"
-echo "test"
 sudo chmod 600 /dev/hidraw1
